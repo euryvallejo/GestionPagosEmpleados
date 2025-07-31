@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "i6AjTzaRiBc=",
+  "success": true,
+  "projectFilePath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.API/GPE.API.csproj",
+  "expectedPackageFiles": [
+    "/Users/euryvallejo/.nuget/packages/microsoft.aspnetcore.openapi/9.0.1/microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
+    "/Users/euryvallejo/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
