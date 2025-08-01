@@ -1,0 +1,16 @@
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/bin/Debug/net8.0/GPE.Infrastructure.deps.json
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/bin/Debug/net8.0/GPE.Infrastructure.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/bin/Debug/net8.0/GPE.Infrastructure.pdb
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/bin/Debug/net8.0/GPE.Domain.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/bin/Debug/net8.0/GPE.Domain.pdb
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.csproj.AssemblyReference.cache
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.AssemblyInfoInputs.cache
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.AssemblyInfo.cs
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.sourcelink.json
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infr.9C735653.Up2Date
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/refint/GPE.Infrastructure.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/GPE.Infrastructure.pdb
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/Debug/net8.0/ref/GPE.Infrastructure.dll

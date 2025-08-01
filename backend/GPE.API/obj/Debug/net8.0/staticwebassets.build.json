@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "sJ0uVkLE9gaTxX6Xoit4MXU9SOHLEMrbdrXRJWl8Hys=",
+  "Source": "GPE.API",
+  "BasePath": "_content/GPE.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -1,0 +1,12 @@
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/bin/Debug/net8.0/GPE.Domain.deps.json
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/bin/Debug/net8.0/GPE.Domain.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/bin/Debug/net8.0/GPE.Domain.pdb
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.AssemblyInfoInputs.cache
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.AssemblyInfo.cs
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.csproj.CoreCompileInputs.cache
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.sourcelink.json
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/refint/GPE.Domain.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/GPE.Domain.pdb
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/Debug/net8.0/ref/GPE.Domain.dll

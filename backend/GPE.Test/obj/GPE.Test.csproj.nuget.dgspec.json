@@ -1,0 +1,308 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/GPE.Test.csproj": {}
+  },
+  "projects": {
+    "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Application/GPE.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Application/GPE.Application.csproj",
+        "projectName": "GPE.Application",
+        "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Application/GPE.Application.csproj",
+        "packagesPath": "/Users/euryvallejo/.nuget/packages/",
+        "outputPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/euryvallejo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj": {
+                "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj"
+              },
+              "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/GPE.Infrastructure.csproj": {
+                "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/GPE.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj",
+        "projectName": "GPE.Domain",
+        "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj",
+        "packagesPath": "/Users/euryvallejo/.nuget/packages/",
+        "outputPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/euryvallejo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/GPE.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/GPE.Infrastructure.csproj",
+        "projectName": "GPE.Infrastructure",
+        "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/GPE.Infrastructure.csproj",
+        "packagesPath": "/Users/euryvallejo/.nuget/packages/",
+        "outputPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/euryvallejo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj": {
+                "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.18, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.18, )"
+            },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/GPE.Test.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/GPE.Test.csproj",
+        "projectName": "GPE.Test",
+        "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/GPE.Test.csproj",
+        "packagesPath": "/Users/euryvallejo/.nuget/packages/",
+        "outputPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/euryvallejo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Application/GPE.Application.csproj": {
+                "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Application/GPE.Application.csproj"
+              },
+              "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj": {
+                "projectPath": "/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Domain/GPE.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[8.5.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.14.1, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.8.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

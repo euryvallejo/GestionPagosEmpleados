@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  api:
+    build: ./backend/GPE.API
+    ports:
+      - "5000:80"
+    depends_on:
+      - sqlserver
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
