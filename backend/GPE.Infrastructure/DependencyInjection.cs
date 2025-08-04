@@ -1,10 +1,9 @@
-using GPE.Infrastructure.Interfaces;
+using GPE.Domain.Interfaces;
 using GPE.Infrastructure.Persistence;
 using GPE.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
 
 namespace GPE.Infrastructure
 {
@@ -13,8 +12,10 @@ namespace GPE.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<ContextApp>(options =>
-                options.UseSqlServer(config.GetConnectionString("Default")));
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
             return services;
         }
     }

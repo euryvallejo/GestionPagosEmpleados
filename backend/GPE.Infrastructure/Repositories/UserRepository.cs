@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using GPE.Infrastructure.Interfaces;
+using GPE.Domain.Interfaces;
 using GPE.Infrastructure.Persistence;
 using GPE.Domain.Entities;
 
@@ -20,5 +20,6 @@ namespace GPE.Infrastructure.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
+        public User? GetByUsername(string username) => _context.Users.FirstOrDefault(u => u.Username == username);
     }
 }

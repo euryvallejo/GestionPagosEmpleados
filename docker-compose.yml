@@ -1,19 +1,61 @@
 version: "3.8"
 services:
-  api:
-    build: ./backend/GPE.API
-    ports:
-      - "5000:80"
+  migrations:
+    build:
+      context: ./backend
+      dockerfile: GPE.API/Dockerfile
     depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=GestionPagosDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true
+    command: dotnet ef database update --no-build
+    volumes:
+      - ./backend:/app
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: GPE.API/Dockerfile
+    ports:
+      - "5001:8080"
+    depends_on:
+      - migrations
       - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=GestionPagosDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true
+      - Jwt__Key=Kj8$mN2#pQ9&vB5*xC7!wE4@rT6%yU1^
+      - Jwt__Issuer=GPEJwtIssuer
+      - Jwt__Audience=GPEJwtAudience
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
+    depends_on:
+      - api
+
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     environment:
       SA_PASSWORD: "YourStrong@Passw0rd"
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong@Passw0rd' -Q 'SELECT 1' -C",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  sqlserver_data:

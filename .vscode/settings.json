@@ -3,5 +3,6 @@
     "activityBar.background": "#3E2824",
     "titleBar.activeBackground": "#573832",
     "titleBar.activeForeground": "#FCFAF9"
-  }
+  },
+  "sqltools.connections": []
 }

@@ -6,6 +6,6 @@ namespace GPE.Application.Interfaces
     public interface IUserService
     {
         Task<List<User>> GetAllAsync();
-        Task<User> CreateAsync(CreateUserDto dto);
+        Task<User> CreateAsync(UserDto dto);
     }
 }

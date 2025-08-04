@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GPE.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+003bec92db7de4191f111849e7908d31153129ae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93c7608e0cd3b6ce06739daafd98f32e7bf4c69a")]
 [assembly: System.Reflection.AssemblyProductAttribute("GPE.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GPE.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

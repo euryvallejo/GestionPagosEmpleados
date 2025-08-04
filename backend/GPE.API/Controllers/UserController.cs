@@ -16,7 +16,7 @@ namespace GPE.API.Controllers
         public async Task<IActionResult> Get() => Ok(await _service.GetAllAsync());
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateUserDto dto)
+        public async Task<IActionResult> Create(UserDto dto)
         {
             var user = await _service.CreateAsync(dto);
             return Ok(user);
