@@ -5,10 +5,8 @@ namespace GPE.Application.DTOs
 {
     public class CreateEmpleadoDto
     {
-        [Required]
         public int Id { get; set; }
 
-        [Required]
         public string? PrimerNombre { get; set; }
 
         [Required]
@@ -21,11 +19,11 @@ namespace GPE.Application.DTOs
         public string TipoEmpleado { get; set; }
 
         // Propiedades específicas según el tipo de empleado
-        public decimal? SalarioSemanal { get; set; }
-        public decimal? SueldoPorHora { get; set; }
-        public double? HorasTrabajadas { get; set; }
-        public decimal? VentasBrutas { get; set; }
-        public decimal? TarifaComision { get; set; }
-        public decimal? SalarioBase { get; set; }
+        public decimal? SalarioSemanal { get; set; } = 0;
+        public decimal? SueldoPorHora { get; set; } = 0;
+        public double? HorasTrabajadas { get; set; } = 0;
+        public decimal? VentasBrutas { get; set; } = 0;
+        public decimal? TarifaComision { get; set; } = 0;
+        public decimal? SalarioBase { get; set; } = 0;
     }
 }
