@@ -10,8 +10,24 @@ const ResumenCard: React.FC<ResumenCardProps> = ({ resumen }) => {
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP'
-    }).format(amount);
+    }).format(amount || 0);
   };
+
+  const formatPercentage = (percentage: number) => {
+    return (percentage || 0).toFixed(1);
+  };
+
+  // Validar que resumen existe y tiene las propiedades necesarias
+  if (!resumen) {
+    return (
+      <div className="resumen-cards">
+        <div className="alert alert-warning">
+          <i className="fas fa-exclamation-triangle"></i>
+          No hay datos de resumen disponibles
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="resumen-cards">
@@ -23,7 +39,7 @@ const ResumenCard: React.FC<ResumenCardProps> = ({ resumen }) => {
                 <i className="fas fa-users"></i>
               </div>
               <div className="stat-content">
-                <h3>{resumen.totalEmpleados}</h3>
+                <h3>{resumen.totalEmpleados || 0}</h3>
                 <p>Total Empleados</p>
               </div>
             </div>
@@ -65,34 +81,43 @@ const ResumenCard: React.FC<ResumenCardProps> = ({ resumen }) => {
           <div className="tipos-empleados">
             <h4>Distribución por Tipo de Empleado</h4>
             <div className="tipos-grid">
-              {resumen.porTipo.map((tipo, index) => (
-                <div key={index} className="tipo-card">
-                  <div className="tipo-header">
-                    <h5>{tipo.tipoEmpleado}</h5>
-                    <span className="badge">{tipo.cantidad}</span>
-                  </div>
-                  <div className="tipo-stats">
-                    <div className="stat">
-                      <span className="label">Porcentaje:</span>
-                      <span className="value">{tipo.porcentaje.toFixed(1)}%</span>
+              {resumen.porTipo && resumen.porTipo.length > 0 ? (
+                resumen.porTipo.map((tipo, index) => (
+                  <div key={`tipo-${index}-${tipo.tipoEmpleado || 'unknown'}`} className="tipo-card">
+                    <div className="tipo-header">
+                      <h5>{tipo.tipoEmpleado || 'Tipo no especificado'}</h5>
+                      <span className="badge">{tipo.cantidad || 0}</span>
                     </div>
-                    <div className="stat">
-                      <span className="label">Total Pagos:</span>
-                      <span className="value">{formatCurrency(tipo.totalPagos)}</span>
+                    <div className="tipo-stats">
+                      <div className="stat">
+                        <span className="label">Porcentaje:</span>
+                        <span className="value">{formatPercentage(tipo.porcentaje)}%</span>
+                      </div>
+                      <div className="stat">
+                        <span className="label">Total Pagos:</span>
+                        <span className="value">{formatCurrency(tipo.totalPagos)}</span>
+                      </div>
+                      <div className="stat">
+                        <span className="label">Promedio:</span>
+                        <span className="value">{formatCurrency(tipo.promedioPago)}</span>
+                      </div>
                     </div>
-                    <div className="stat">
-                      <span className="label">Promedio:</span>
-                      <span className="value">{formatCurrency(tipo.promedioPago)}</span>
+                    <div className="progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ 
+                          width: `${Math.min(Math.max(tipo.porcentaje || 0, 0), 100)}%` 
+                        }}
+                      ></div>
                     </div>
                   </div>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill"
-                      style={{ width: `${tipo.porcentaje}%` }}
-                    ></div>
-                  </div>
+                ))
+              ) : (
+                <div className="no-data">
+                  <i className="fas fa-info-circle"></i>
+                  <p>No hay distribución por tipo disponible</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>

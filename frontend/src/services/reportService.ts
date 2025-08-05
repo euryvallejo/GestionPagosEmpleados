@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5290/api/Reportes';
+import apiClient from './apiClient';
 
 export interface EmpleadoReporte {
   id: number;
@@ -71,23 +69,23 @@ export interface Estadisticas {
 export const reportesService = {
   async getReporteEmpleados(tipoEmpleado?: string): Promise<ReporteEmpleados> {
     const params = tipoEmpleado ? { tipoEmpleado } : {};
-    const response = await axios.get(`${API_URL}/empleados`, { params });
+    const response = await apiClient.get('/Reportes/empleados', { params });
     return response.data;
   },
 
   async getResumenEmpleados(): Promise<ResumenEmpleados> {
-    const response = await axios.get(`${API_URL}/empleados/resumen`);
+    const response = await apiClient.get('/Reportes/empleados/resumen');
     return response.data;
   },
 
   async getReporteNomina(fecha?: Date): Promise<ReporteNomina> {
     const params = fecha ? { fecha: fecha.toISOString() } : {};
-    const response = await axios.get(`${API_URL}/nomina`, { params });
+    const response = await apiClient.get('/Reportes/nomina', { params });
     return response.data;
   },
 
   async getEstadisticas(): Promise<Estadisticas> {
-    const response = await axios.get(`${API_URL}/estadisticas`);
+    const response = await apiClient.get('/Reportes/estadisticas');
     return response.data;
   }
 };

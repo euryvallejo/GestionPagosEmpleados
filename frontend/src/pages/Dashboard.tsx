@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../authContext';
-import { getEmpleados, deleteEmpleado, type Empleado } from '../services/empleadoService';
+import { empleadoService } from '../services/empleadoService';
+import { useAuth } from '../hooks/useAuth';
 import EmpleadoForm from '../components/EmpleadoForm';
+import type { Empleado } from '../services/empleadoService';
 
 const Dashboard = () => {
-  const { role, logout } = useAuth();
   const navigate = useNavigate();
+  const { user, logout, isAdmin } = useAuth(); // 0btener datos del contexto de auth
   const [empleados, setEmpleados] = useState<Empleado[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,15 +17,18 @@ const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingEmpleadoId, setEditingEmpleadoId] = useState<number | undefined>();
 
-  // Función para verificar si es administrador
-  const isAdmin = () => {
-    const roleNumber = typeof role === 'string' ? parseInt(role) : role;
-    return roleNumber === 1;
-  };
-
   // Función para obtener el texto del rol
   const getRoleText = () => {
+    console.log(`datos del rol: ${isAdmin()}`);
     return isAdmin() ? 'Administrador' : 'Usuario';
+  };
+
+  // Función para manejar logout
+  const handleLogout = () => {
+    if (window.confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+      logout();
+      navigate('/login', { replace: true });
+    }
   };
 
   // Función para obtener empleados del servicio
@@ -32,11 +36,11 @@ const Dashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getEmpleados();
+      const data = await empleadoService.getAll();
       setEmpleados(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al cargar empleados:', error);
-      setError('Error al cargar la lista de empleados');
+      setError(error.message || 'Error al cargar la lista de empleados');
       setEmpleados([]);
     } finally {
       setLoading(false);
@@ -52,12 +56,12 @@ const Dashboard = () => {
 
     if (window.confirm('¿Estás seguro de que deseas eliminar este empleado?')) {
       try {
-        await deleteEmpleado(id);
+        await empleadoService.delete(id);
         await fetchEmpleados();
         alert('Empleado eliminado exitosamente');
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error al eliminar empleado:', error);
-        alert('Error al eliminar el empleado');
+        alert(error.message || 'Error al eliminar el empleado');
       }
     }
   };
@@ -78,7 +82,7 @@ const Dashboard = () => {
       alert('No tienes permisos para realizar esta acción');
       return;
     }
-    console.log('Editando empleado con ID:', id); // Debug
+    console.log('Editando empleado con ID:', id);
     setEditingEmpleadoId(id); // Establecer ID para modo edición
     setShowModal(true);
   };
@@ -95,7 +99,7 @@ const Dashboard = () => {
     handleCloseModal(); // Cerrar el modal
   };
 
-  // Función para ver detalles del empleado (esta sí navega a otra página)
+  // Función para ver detalles del empleado
   const handleVerDetalles = (id: number) => {
     navigate(`/empleado/${id}`);
   };
@@ -107,18 +111,25 @@ const Dashboard = () => {
   // Filtrar empleados según el término de búsqueda
   const empleadosFiltrados = empleados.filter(empleado =>
     empleado.primerNombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    empleado.apellidoPaterno.toLowerCase().includes(searchTerm.toLowerCase())
+    empleado.apellidoPaterno?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
       currency: 'DOP'
-    }).format(amount);
+    }).format(amount || 0);
   };
 
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString('es-ES');
+  };
+
+  // Calcular promedio de salario de manera segura
+  const calcularPromedioSalario = () => {
+    if (empleados.length === 0) return 0;
+    const total = empleados.reduce((sum, emp) => sum + (emp.salarioSemanal || 0), 0);
+    return total / empleados.length;
   };
 
   return (
@@ -129,13 +140,15 @@ const Dashboard = () => {
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <h1 className="h3 mb-1">Dashboard</h1>
-              <p className="text-muted mb-0">Gestión de Empleados</p>
+              <p className="text-muted mb-0">
+                Gestión de Empleados - Bienvenido {user?.username || 'Usuario'}
+              </p>
             </div>
             <div className="d-flex gap-2">
               <span className={`badge ${isAdmin() ? 'bg-danger' : 'bg-primary'} fs-6`}>
                 Rol: {getRoleText()}
               </span>
-               {isAdmin() && (
+              {isAdmin() && (
                 <button 
                   onClick={() => navigate('/user-management')}
                   className="btn btn-outline-info btn-sm"
@@ -144,13 +157,13 @@ const Dashboard = () => {
                   Gestión de Usuarios
                 </button>
               )}
-              <button 
-                onClick={logout}
+              {/* <button 
+                onClick={handleLogout} // ✅ Usar la función handleLogout
                 className="btn btn-outline-danger btn-sm"
               >
                 <i className="fas fa-sign-out-alt me-1"></i>
                 Cerrar Sesión
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -234,7 +247,7 @@ const Dashboard = () => {
                   <p className="mb-0">Por Comisión</p>
                 </div>
                 <div className="align-self-center">
-                  <i className="fas fa-user-clock fa-2x"></i>
+                  <i className="fas fa-percentage fa-2x"></i>
                 </div>
               </div>
             </div>
@@ -247,10 +260,10 @@ const Dashboard = () => {
               <div className="d-flex justify-content-between">
                 <div>
                   <h4 className="mb-0">{empleados.filter(e => e.tipoEmpleado === 'AsalariadoPorComision').length}</h4>
-                  <p className="mb-0">Asalariado Comisión</p>
+                  <p className="mb-0">Asalariado + Comisión</p>
                 </div>
                 <div className="align-self-center">
-                  <i className="fas fa-user-clock fa-2x"></i>
+                  <i className="fas fa-user-plus fa-2x"></i>
                 </div>
               </div>
             </div>
@@ -258,12 +271,12 @@ const Dashboard = () => {
         </div>
 
         <div className="col-lg-2 col-md-6 mb-3">
-          <div className="card bg-info text-white">
+          <div className="card bg-dark text-white">
             <div className="card-body">
               <div className="d-flex justify-content-between">
                 <div>
                   <h4 className="mb-0">
-                    {formatCurrency(empleados.reduce((sum, emp) => sum + emp.salarioSemanal, 0) / empleados.length || 0)}
+                    {formatCurrency(calcularPromedioSalario())}
                   </h4>
                   <p className="mb-0">Salario Promedio</p>
                 </div>
@@ -282,7 +295,10 @@ const Dashboard = () => {
           <div className="card shadow">
             <div className="card-header">
               <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">Lista de Empleados</h5>
+                <h5 className="mb-0">
+                  <i className="fas fa-users me-2"></i>
+                  Lista de Empleados
+                </h5>
                 <div className="d-flex gap-2">
                   <div className="input-group" style={{ width: '300px' }}>
                     <span className="input-group-text">
@@ -313,8 +329,9 @@ const Dashboard = () => {
               {loading ? (
                 <div className="text-center py-4">
                   <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Cargando...</span>
+                    <span className="visually-hidden">Cargando empleados...</span>
                   </div>
+                  <p className="mt-2 text-muted">Cargando lista de empleados...</p>
                 </div>
               ) : (
                 <div className="table-responsive">
@@ -323,9 +340,9 @@ const Dashboard = () => {
                       <tr>
                         <th>ID</th>
                         <th>Nombre Completo</th>
-                        <th>Salario</th>
+                        <th>Salario Semanal</th>
                         <th>Fecha Ingreso</th>
-                        <th>Tipo</th>
+                        <th>Tipo Empleado</th>
                         <th>Acciones</th>
                       </tr>
                     </thead>
@@ -333,55 +350,68 @@ const Dashboard = () => {
                       {empleadosFiltrados.length > 0 ? (
                         empleadosFiltrados.map(empleado => (
                           <tr key={empleado.id}>
-                            <td>{empleado.id}</td>
+                            <td>
+                              <span className="badge bg-light text-dark">#{empleado.id}</span>
+                            </td>
                             <td>
                               <div className="d-flex align-items-center">
                                 <div className="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-2">
                                   <span className="text-white fw-bold">
-                                    {empleado.primerNombre?.charAt(0)}{empleado.apellidoPaterno.charAt(0)}
+                                    {empleado.primerNombre?.charAt(0) || 'U'}
+                                    {empleado.apellidoPaterno?.charAt(0) || 'N'}
                                   </span>
                                 </div>
-                                {empleado.primerNombre} {empleado.apellidoPaterno}
+                                <div>
+                                  <div className="fw-semibold">
+                                    {empleado.primerNombre || 'Sin nombre'} {empleado.apellidoPaterno || 'Sin apellido'}
+                                  </div>
+                                  {empleado.segundoNombre && (
+                                    <small className="text-muted">{empleado.segundoNombre}</small>
+                                  )}
+                                </div>
                               </div>
                             </td>
-                            <td>{formatCurrency(empleado.salarioSemanal)}</td>
+                            <td>
+                              <span className="fw-bold text-success">
+                                {formatCurrency(empleado.salarioSemanal || 0)}
+                              </span>
+                            </td>
                             <td>{formatDate(empleado.fechaIngreso)}</td>
                             <td>
                               <span className={`badge ${
                                 empleado.tipoEmpleado === 'Asalariado' ? 'bg-success' : 
-                                empleado.tipoEmpleado === 'PorHoras' ? 'bg-warning' :
+                                empleado.tipoEmpleado === 'PorHoras' ? 'bg-warning text-dark' :
                                 empleado.tipoEmpleado === 'PorComision' ? 'bg-info' :
-                                empleado.tipoEmpleado === 'AsalariadoPorComision' ? 'bg-secondary' : 'bg-light'
+                                empleado.tipoEmpleado === 'AsalariadoPorComision' ? 'bg-secondary' : 'bg-light text-dark'
                               }`}>
-                                {empleado.tipoEmpleado}
+                                {empleado.tipoEmpleado || 'Sin definir'}
                               </span>
                             </td>
                             <td>
                               <div className="btn-group" role="group">
-                                {/* <button 
-                                  className="btn btn-sm btn-outline-primary"
-                                  title="Ver detalles"
-                                  onClick={() => handleVerDetalles(empleado.id)}
-                                >
-                                  <i className="fas fa-eye"></i>
-                                </button> */}
                                 {isAdmin() && (
                                   <>
                                     <button 
                                       className="btn btn-sm btn-outline-secondary"
-                                      title="Editar"
+                                      title="Editar empleado"
                                       onClick={() => handleEditarEmpleado(empleado.id)}
                                     >
                                       <i className="fas fa-edit"></i>
                                     </button>
                                     <button 
                                       className="btn btn-sm btn-outline-danger"
-                                      title="Eliminar"
+                                      title="Eliminar empleado"
                                       onClick={() => handleDeleteEmpleado(empleado.id)}
                                     >
                                       <i className="fas fa-trash"></i>
                                     </button>
                                   </>
+                                )}
+                                {!isAdmin() && (
+                                  <span className="text-muted small">
+                                    <i className="fas fa-eye-slash me-1"></i>
+                                    Solo lectura
+                                  </span>
                                 )}
                               </div>
                             </td>
@@ -391,9 +421,15 @@ const Dashboard = () => {
                         <tr>
                           <td colSpan={6} className="text-center py-4">
                             <div className="text-muted">
-                              <i className="fas fa-users fa-3x mb-3"></i>
-                              <p>No se encontraron empleados</p>
-                              {isAdmin() && (
+                              <i className="fas fa-users fa-3x mb-3 text-muted"></i>
+                              <h5>No se encontraron empleados</h5>
+                              <p>
+                                {searchTerm 
+                                  ? `No hay empleados que coincidan con "${searchTerm}"`
+                                  : 'No hay empleados registrados en el sistema'
+                                }
+                              </p>
+                              {isAdmin() && !searchTerm && (
                                 <button 
                                   className="btn btn-primary"
                                   onClick={handleAgregarEmpleado}
@@ -411,6 +447,34 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
+            
+            {/* Footer con información adicional */}
+            {empleados.length > 0 && (
+              <div className="card-footer">
+                <div className="row text-center">
+                  <div className="col-md-3">
+                    <small className="text-muted">
+                      <strong>Total:</strong> {empleados.length} empleados
+                    </small>
+                  </div>
+                  <div className="col-md-3">
+                    <small className="text-muted">
+                      <strong>Filtrados:</strong> {empleadosFiltrados.length} empleados
+                    </small>
+                  </div>
+                  <div className="col-md-3">
+                    <small className="text-muted">
+                      <strong>Costo Total:</strong> {formatCurrency(empleados.reduce((sum, emp) => sum + (emp.salarioSemanal || 0), 0))}
+                    </small>
+                  </div>
+                  <div className="col-md-3">
+                    <small className="text-muted">
+                      <strong>Última actualización:</strong> {new Date().toLocaleTimeString()}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -429,6 +493,7 @@ const Dashboard = () => {
                   type="button" 
                   className="btn-close" 
                   onClick={handleCloseModal}
+                  aria-label="Cerrar modal"
                 ></button>
               </div>
               

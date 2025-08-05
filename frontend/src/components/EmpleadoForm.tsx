@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import type { TipoEmpleado } from "../types/empleado";
-import { createEmpleado } from '../services/empleadoService';
+import { empleadoService } from '../services/empleadoService';
 
 interface EmpleadoFormData {
   tipoEmpleado: TipoEmpleado;
@@ -74,7 +74,7 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
     console.log('Processed employee data:', empleadoData);
     
     try {
-      const result = await createEmpleado(empleadoData);
+      const result = await empleadoService.create(empleadoData);
       if (result) {
         alert('Empleado creado exitosamente');
         reset();

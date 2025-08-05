@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { register } from '../services/authService';
+import { useNavigate, type NavigateFunction } from 'react-router-dom';
+import { AuthService } from '../services/authService'; 
 import type { RegisterData } from '../types/auth';
 
 const Register = () => {
   const [form, setForm] = useState<RegisterData>({ username: '', password: '', role: 0 });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+    // Verificar si ya está autenticado
+  useEffect(() => {
+    if (AuthService.isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await register(form);
+      await AuthService.register({username: form.username, password: form.password, role: form.role});
       alert('Usuario registrado exitosamente');
       navigate('/login');
-    } catch {
-      alert('Error en el registro');
+    } catch (error: any) {
+      console.error('Error en el registro:', error);
+      setError(error.message || 'Error en el registro');
     } finally {
       setLoading(false);
     }
@@ -47,6 +56,14 @@ const Register = () => {
                 <h3 className="card-title text-dark mb-1">Crear Cuenta</h3>
                 <p className="text-muted">Completa los datos para registrarte</p>
               </div>
+
+              {/* Mostrar errores si existen */}
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  <i className="fas fa-exclamation-triangle me-2"></i>
+                  {error}
+                </div>
+              )}
 
               {/* Register Form */}
               <form onSubmit={handleSubmit}>
@@ -141,3 +158,7 @@ const Register = () => {
 };
 
 export default Register;
+
+function useEffect(arg0: () => void, arg1: NavigateFunction[]) {
+  throw new Error('Function not implemented.');
+}

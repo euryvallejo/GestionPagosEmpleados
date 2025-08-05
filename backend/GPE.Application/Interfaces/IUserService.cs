@@ -7,5 +7,6 @@ namespace GPE.Application.Interfaces
     {
         Task<List<User>> GetAllAsync();
         Task<User> CreateAsync(UserDto dto);
+        Task<User> GetByUsernameAsync(string username);
     }
 }

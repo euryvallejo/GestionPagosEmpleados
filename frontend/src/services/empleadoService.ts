@@ -1,104 +1,63 @@
-import axios from 'axios';
-import type { EmpleadoAsalariado, EmpleadoBase, EmpleadoPorHoras, EmpleadoPorComision, EmpleadoAsalariadoPorComision } from '../types/empleado';
+import apiClient from './apiClient';
 
-const API_URL = 'http://localhost:5290/api';
-
-// Configurar interceptor para incluir token de autorización
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Interface para empleado completo (con ID)
-export interface Empleado extends EmpleadoBase, EmpleadoAsalariado, EmpleadoPorHoras, EmpleadoPorComision, EmpleadoAsalariadoPorComision {
+export interface Empleado {
   id: number;
+  primerNombre: string;
+  segundoNombre?: string;
+  apellidoPaterno: string;
+  apellidoMaterno?: string;
+  salarioBase: number;
+  tipoEmpleado: string;
+  fechaIngreso: string;
 }
 
-// Crear empleado
-export const createEmpleado = async (data: EmpleadoBase) => {
-  console.log('Creating employee:', data);
-  try {
-    const response = await axios.post(`${API_URL}/Empleado`, data);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating employee:', error);
-    throw new Error('Error al crear el empleado');
-  }
-};
+export interface CreateEmpleadoDto {
+  primerNombre: string;
+  segundoNombre?: string;
+  apellidoPaterno: string;
+  apellidoMaterno?: string;
+  salarioBase: number;
+  tipoEmpleado: string;
+  fechaIngreso: string;
+}
 
-// Obtener todos los empleados
-export const getEmpleados = async (): Promise<Empleado[]> => {
-  try {
-    const response = await axios.get(`${API_URL}/Empleado`);
+export const empleadoService = {
+  async getAll(): Promise<Empleado[]> {
+    const response = await apiClient.get('/empleado');
     return response.data;
-  } catch (error) {
-    console.error('Error fetching employees:', error);
-    throw new Error('Error al obtener la lista de empleados');
-  }
-};
+  },
 
-// Obtener empleado por ID
-export const getEmpleadoById = async (id: number): Promise<Empleado> => {
-  try {
-    const response = await axios.get(`${API_URL}/Empleado/${id}`);
+  async getById(id: number): Promise<Empleado> {
+    const response = await apiClient.get(`/empleado/${id}`);
     return response.data;
-  } catch (error) {
-    console.error('Error fetching employee:', error);
-    throw new Error('Error al obtener el empleado');
-  }
-};
+  },
 
-// Actualizar empleado
-export const updateEmpleado = async (id: number, data: Partial<EmpleadoBase>): Promise<Empleado> => {
-  console.log('Updating employee:', id, data);
-  try {
-    const response = await axios.put(`${API_URL}/Empleado/${id}`, data);
+  async create(empleado: CreateEmpleadoDto): Promise<Empleado> {
+    const response = await apiClient.post('/empleado', empleado);
     return response.data;
-  } catch (error) {
-    console.error('Error updating employee:', error);
-    throw new Error('Error al actualizar el empleado');
-  }
-};
+  },
 
-// Eliminar empleado
-export const deleteEmpleado = async (id: number): Promise<void> => {
-  console.log('Deleting employee:', id);
-  try {
-    await axios.delete(`${API_URL}/Empleado/${id}`);
-  } catch (error) {
-    console.error('Error deleting employee:', error);
-    throw new Error('Error al eliminar el empleado');
-  }
-};
-
-// Buscar empleados por término
-export const searchEmpleados = async (searchTerm: string): Promise<Empleado[]> => {
-  try {
-    const response = await axios.get(`${API_URL}/Empleado/search`, {
-      params: { q: searchTerm }
-    });
+  async update(id: number, empleado: Partial<CreateEmpleadoDto>): Promise<Empleado> {
+    const response = await apiClient.put(`/empleado/${id}`, empleado);
     return response.data;
-  } catch (error) {
-    console.error('Error searching employees:', error);
-    throw new Error('Error al buscar empleados');
-  }
-};
+  },
 
-// Obtener estadísticas de empleados
-export const getEmpleadosStats = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/Empleado/stats`);
+  async delete(id: number): Promise<void> {
+    await apiClient.delete(`/empleado/${id}`);
+  },
+
+  async getByTipo(tipo: string): Promise<Empleado[]> {
+    const response = await apiClient.get(`/empleado/tipo/${tipo}`);
     return response.data;
-  } catch (error) {
-    console.error('Error fetching employee stats:', error);
-    throw new Error('Error al obtener estadísticas');
+  },
+
+  async calcularSalario(id: number): Promise<any> {
+    const response = await apiClient.get(`/empleado/${id}/salario`);
+    return response.data;
+  },
+
+  async getEstadisticas(): Promise<any> {
+    const response = await apiClient.get('/empleado/estadisticas');
+    return response.data;
   }
 };

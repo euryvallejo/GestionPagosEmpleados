@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../authContext';
+import { useAuth } from '../hooks/useAuth';
 import { getUsers, toggleUserStatus, deleteUser, createUser, updateUser, type User, type CreateUserDto, type UpdateUserDto } from '../services/userService';
 
 const UserManagement = () => {
-  const { role, logout } = useAuth();
+  const { isAdmin, logout } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,17 +20,17 @@ const UserManagement = () => {
   });
 
   // Verificar si es administrador
-  const isAdmin = () => {
-    const roleNumber = typeof role === 'string' ? parseInt(role) : role;
-    return roleNumber === 1;
-  };
+  // const isAdmin = () => {
+  //   const roleNumber = role;
+  //   return roleNumber === 1;
+  // };
 
   // Redirect si no es admin
   useEffect(() => {
     if (!isAdmin()) {
       navigate('/dashboard');
     }
-  }, [role, navigate]);
+  }, [navigate]);
 
   // Obtener usuarios
   const fetchUsers = async () => {

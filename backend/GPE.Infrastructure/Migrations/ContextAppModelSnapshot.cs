@@ -44,6 +44,9 @@ namespace GPE.Infrastructure.Migrations
                     b.Property<string>("PrimerNombre")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("SalarioSemanal")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("TipoEmpleado")
                         .IsRequired()
                         .HasMaxLength(21)
@@ -70,6 +73,9 @@ namespace GPE.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -89,9 +95,6 @@ namespace GPE.Infrastructure.Migrations
             modelBuilder.Entity("GPE.Domain.Entities.EmpleadoAsalariado", b =>
                 {
                     b.HasBaseType("GPE.Domain.Entities.Empleado");
-
-                    b.Property<decimal>("SalarioSemanal")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasDiscriminator().HasValue("Asalariado");
                 });

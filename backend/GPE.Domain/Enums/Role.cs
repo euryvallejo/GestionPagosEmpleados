@@ -2,7 +2,7 @@ namespace GPE.Domain.Enums
 {
     public enum Role
     {
-        User,
-        Admin
+        User = 2,
+        Admin = 1
     }
 }

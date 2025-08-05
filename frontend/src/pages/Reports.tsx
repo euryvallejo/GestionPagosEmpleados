@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../authContext';
 import { reportesService } from '../services/reportService';
 import type { ReporteEmpleados, ResumenEmpleados, Estadisticas } from '../services/reportService';
 import TablaEmpleados from '../components/reportes/TablaEmpleados';
 import ResumenCard from '../components/reportes/ResumenCard';
 import EstadisticasChart from '../components/reportes/EstadisticasChart';
 import FiltrosReporte from '../components/reportes/FiltrosReporte';
+import { useAuth } from '../hooks/useAuth';
 
 type VistaReporte = 'resumen' | 'tabla' | 'estadisticas';
 

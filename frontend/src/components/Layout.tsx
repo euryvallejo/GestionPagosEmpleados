@@ -1,11 +1,13 @@
-import { Outlet } from 'react-router-dom';
-import { useAuth } from '../authContext';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const Layout = () => {
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+    navigate('/login'); // Redirige al login después del logout
   };
 
   return (
@@ -13,25 +15,23 @@ const Layout = () => {
       <aside className="sidebar">
         <div className="logo-container">
           <img 
-            src="./src/assets/logo-superintendencia-de-bancos.svg" 
+            src="/src/assets/logo-superintendencia-de-bancos.svg" 
             alt="Logo SB" 
             className="logo-image" 
           />
         </div>
         <br />
         <nav className="menu">
-          <a href="/dashboard" className="menu-item active">
+          <Link to="/dashboard" className="menu-item">
             <i className="fas fa-dashboard icon"></i> Dashboard
-          </a>
-          <a href="/reports" className="menu-item">
+          </Link>
+          <Link to="/reports" className="menu-item">
             <i className="fas fa-search icon"></i> Reportes
-          </a>
-          {/* <a href="/registro-empleado" className="menu-item">
-            <i className="fas fa-plus-circle icon"></i> Registro Empleado
-          </a> */}
-          <a href="#" className="menu-item" onClick={handleLogout}>
+          </Link>
+
+          <button className="logout-btn" onClick={handleLogout}>
             <i className="fas fa-sign-out-alt icon"></i> Cerrar Sesión
-          </a>
+          </button>
         </nav>
       </aside>
 
@@ -39,10 +39,10 @@ const Layout = () => {
         <header className="header">
           <br />
         </header>
-              <section className="content-box">
-                  <div style={{ padding: '20px' }}>
-                      <Outlet />
-                      </div>
+        <section className="content-box">
+          <div style={{ padding: '20px' }}>
+            <Outlet />
+          </div>
         </section>
       </main>
     </div>
