@@ -19,19 +19,20 @@ namespace GPE.API.Controllers
         /// <summary>
         /// Obtiene todos los empleados
         /// </summary>
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<EmpleadoDto>>> GetAllEmpleados()
-        // {
-        //     try
-        //     {
-        //         var empleados = await _empleadoService.GetAllAsync();
-        //         return Ok(empleados);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-        //     }
-        // }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CreateEmpleadoDto>>> GetAllEmpleados()
+        {
+            try
+            {
+                var empleados = await _empleadoService.GetAllAsync();
+                Console.WriteLine($"Empleados: {empleados}");
+                return Ok(empleados);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Obtiene un empleado por ID
@@ -66,7 +67,6 @@ namespace GPE.API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-
                 var empleado = await _empleadoService.CreateAsync(createEmpleadoDto);
                 return CreatedAtAction(
                     nameof(GetEmpleado),

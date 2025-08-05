@@ -6,24 +6,21 @@ namespace GPE.Application.DTOs
     public class CreateEmpleadoDto
     {
         public int Id { get; set; }
-
         public string? PrimerNombre { get; set; }
+        public string ApellidoPaterno { get; set; } = "";
+        public string NumeroSeguroSocial { get; set; } = "";
+        public string TipoEmpleado { get; set; } = ""; // Mantener como string
+        public DateTime FechaIngreso { get; set; }
 
-        [Required]
-        public string ApellidoPaterno { get; set; }
+        // Campos específicos para cada tipo (opcionales)
+        public decimal? SalarioSemanal { get; set; }
+        public decimal? SueldoPorHora { get; set; }
+        public decimal? HorasTrabajadas { get; set; }
+        public decimal? VentasBrutas { get; set; }
+        public decimal? TarifaComision { get; set; }
+        public decimal? SalarioBase { get; set; }
 
-        [Required]
-        public string NumeroSeguroSocial { get; set; }
-
-        [Required]
-        public string TipoEmpleado { get; set; }
-
-        // Propiedades específicas según el tipo de empleado
-        public decimal? SalarioSemanal { get; set; } = 0;
-        public decimal? SueldoPorHora { get; set; } = 0;
-        public double? HorasTrabajadas { get; set; } = 0;
-        public decimal? VentasBrutas { get; set; } = 0;
-        public decimal? TarifaComision { get; set; } = 0;
-        public decimal? SalarioBase { get; set; } = 0;
+        // Campo calculado automáticamente
+        public decimal PagoSemanal { get; set; }
     }
 }

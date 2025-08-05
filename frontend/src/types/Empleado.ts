@@ -4,6 +4,8 @@ export interface EmpleadoBase {
   primerNombre?: string;
   apellidoPaterno: string;
   numeroSeguroSocial: string;
+  tipoEmpleado: string;
+  fechaIngreso: Date;
 }
 
 export interface EmpleadoAsalariado extends EmpleadoBase {

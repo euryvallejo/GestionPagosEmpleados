@@ -30,9 +30,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
-// Add services to the container
+// Add services specific to the application
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+builder.Services.AddScoped<IReportesService, ReportesService>();
+
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddDbContext<ContextApp>(options =>

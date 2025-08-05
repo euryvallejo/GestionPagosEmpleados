@@ -2,6 +2,7 @@ using GPE.Application.DTOs;
 using GPE.Application.Interfaces;
 using GPE.Domain.Entities;
 using GPE.Domain.Interfaces;
+using GPE.Domain.Enums;
 
 namespace GPE.Application.Services
 {
@@ -16,8 +17,44 @@ namespace GPE.Application.Services
 
         public async Task<IEnumerable<CreateEmpleadoDto>> GetAllAsync()
         {
-            var empleados = await _repository.GetAllAsync();
-            return empleados.Select(MapToDto);
+            try
+            {
+                var empleados = await _repository.GetAllAsync();
+
+                // Logging en el servicio
+                Console.WriteLine($"Empleados desde repository: {empleados?.Count() ?? 0}");
+
+                if (empleados != null && empleados.Any())
+                {
+                    var firstEmpleado = empleados.First();
+                    Console.WriteLine($"Primer empleado - Fecha desde DB: {firstEmpleado.FechaIngreso:yyyy-MM-dd HH:mm:ss}");
+                }
+
+                var dtos = empleados.Select(emp => new CreateEmpleadoDto
+                {
+                    Id = emp.Id,
+                    PrimerNombre = emp.PrimerNombre,
+                    ApellidoPaterno = emp.ApellidoPaterno,
+                    FechaIngreso = emp.FechaIngreso,
+                    TipoEmpleado = emp.TipoEmpleado,
+                    SalarioSemanal = emp.SalarioSemanal
+
+                }).ToList();
+
+                // Verificar después del mapeo
+                if (dtos.Any())
+                {
+                    var firstDto = dtos.First();
+                    Console.WriteLine($"Primer DTO - Fecha después del mapeo: {firstDto.FechaIngreso:yyyy-MM-dd HH:mm:ss}");
+                }
+
+                return dtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en EmpleadoService.GetAllAsync: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<CreateEmpleadoDto?> GetByIdAsync(int id)
@@ -26,11 +63,80 @@ namespace GPE.Application.Services
             return empleado != null ? MapToDto(empleado) : null;
         }
 
-        public async Task<CreateEmpleadoDto> CreateAsync(CreateEmpleadoDto createDto)
+        public async Task<CreateEmpleadoDto> CreateAsync(CreateEmpleadoDto dto)
         {
-            var empleado = CreateEmpleadoFromDto(createDto);
-            var createdEmpleado = await _repository.CreateAsync(empleado);
-            return MapToDto(createdEmpleado);
+            // Convertir string a enum si es necesario
+            if (!Enum.TryParse<TipoEmpleado>(dto.TipoEmpleado, out var tipoEnum))
+            {
+                throw new ArgumentException($"Tipo de empleado no válido: {dto.TipoEmpleado}");
+            }
+
+            // Crear la instancia específica del empleado usando el string
+            Empleado empleado = dto.TipoEmpleado switch
+            {
+                "Asalariado" => new EmpleadoAsalariado
+                {
+                    PrimerNombre = dto.PrimerNombre,
+                    ApellidoPaterno = dto.ApellidoPaterno,
+                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
+                    SalarioSemanal = dto.SalarioSemanal ?? 0
+                },
+                "PorHoras" => new EmpleadoPorHoras
+                {
+                    PrimerNombre = dto.PrimerNombre, // Puede ser null para empleados por horas
+                    ApellidoPaterno = dto.ApellidoPaterno,
+                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
+                    SueldoPorHora = dto.SueldoPorHora ?? 0,
+                    HorasTrabajadas = dto.HorasTrabajadas ?? 0
+                },
+                "PorComision" => new EmpleadoPorComision
+                {
+                    PrimerNombre = dto.PrimerNombre,
+                    ApellidoPaterno = dto.ApellidoPaterno,
+                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
+                    VentasBrutas = dto.VentasBrutas ?? 0,
+                    TarifaComision = dto.TarifaComision ?? 0
+                },
+                "AsalariadoPorComision" => new EmpleadoAsalariadoPorComision
+                {
+                    PrimerNombre = dto.PrimerNombre,
+                    ApellidoPaterno = dto.ApellidoPaterno,
+                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
+                    SalarioBase = dto.SalarioBase ?? 0,
+                    VentasBrutas = dto.VentasBrutas ?? 0,
+                    TarifaComision = dto.TarifaComision ?? 0
+                },
+                _ => throw new ArgumentException($"Tipo de empleado no válido: {dto.TipoEmpleado}")
+            };
+
+            // Calcular el pago automáticamente
+            var pagoCalculado = empleado.CalcularSalario();
+
+            empleado.FechaIngreso = DateTime.UtcNow;
+            empleado.TipoEmpleado = dto.TipoEmpleado;
+            empleado.SalarioSemanal = pagoCalculado; // Asignar el pago calculado
+
+            // Guardar en la base de datos
+            await _repository.CreateAsync(empleado);
+
+
+
+            // Retornar DTO con el pago calculado
+            return new CreateEmpleadoDto
+            {
+                Id = empleado.Id,
+                PrimerNombre = empleado.PrimerNombre,
+                ApellidoPaterno = empleado.ApellidoPaterno,
+                NumeroSeguroSocial = empleado.NumeroSeguroSocial,
+                TipoEmpleado = dto.TipoEmpleado,
+                SalarioSemanal = dto.SalarioSemanal,
+                SueldoPorHora = dto.SueldoPorHora,
+                HorasTrabajadas = dto.HorasTrabajadas,
+                VentasBrutas = dto.VentasBrutas,
+                TarifaComision = dto.TarifaComision,
+                SalarioBase = dto.SalarioBase,
+                PagoSemanal = pagoCalculado // Pago calculado automáticamente
+            };
         }
 
         public async Task<UpdateEmpleadoDto?> UpdateAsync(int id, UpdateEmpleadoDto updateDto)
@@ -62,69 +168,65 @@ namespace GPE.Application.Services
             return empleado.CalcularSalario();
         }
 
-        // Métodos de mapeo privados
+        // Métodos de mapeo privados actualizados
         private static CreateEmpleadoDto MapToDto(Empleado empleado)
         {
-            return new CreateEmpleadoDto
+            var dto = new CreateEmpleadoDto
             {
-                PrimerNombre = empleado.ApellidoPaterno,
+                Id = empleado.Id,
+                PrimerNombre = empleado.PrimerNombre,
                 ApellidoPaterno = empleado.ApellidoPaterno,
                 NumeroSeguroSocial = empleado.NumeroSeguroSocial,
-                TipoEmpleado = empleado.GetType().Name,
-                SalarioBase = empleado.CalcularSalario()
+                TipoEmpleado = GetTipoEmpleadoString(empleado),
+                PagoSemanal = empleado.CalcularSalario()
             };
+
+            // Mapear campos específicos según el tipo
+            switch (empleado)
+            {
+                case EmpleadoAsalariado asalariado:
+                    dto.SalarioSemanal = asalariado.SalarioSemanal;
+                    break;
+                case EmpleadoPorHoras porHoras:
+                    dto.SueldoPorHora = porHoras.SueldoPorHora;
+                    dto.HorasTrabajadas = porHoras.HorasTrabajadas;
+                    break;
+                case EmpleadoPorComision porComision:
+                    dto.VentasBrutas = porComision.VentasBrutas;
+                    dto.TarifaComision = porComision.TarifaComision;
+                    break;
+                case EmpleadoAsalariadoPorComision asalariadoComision:
+                    dto.SalarioBase = asalariadoComision.SalarioBase;
+                    dto.VentasBrutas = asalariadoComision.VentasBrutas;
+                    dto.TarifaComision = asalariadoComision.TarifaComision;
+                    break;
+            }
+
+            return dto;
         }
 
-        // Métodos de mapeo privados
         private static UpdateEmpleadoDto MapToDtoUp(Empleado empleado)
         {
             return new UpdateEmpleadoDto
             {
-                PrimerNombre = empleado.ApellidoPaterno,
+                PrimerNombre = empleado.PrimerNombre,
                 ApellidoPaterno = empleado.ApellidoPaterno,
                 NumeroSeguroSocial = empleado.NumeroSeguroSocial,
-                TipoEmpleado = empleado.GetType().Name,
+                TipoEmpleado = GetTipoEmpleadoString(empleado),
                 SalarioBase = empleado.CalcularSalario()
             };
         }
 
-        private static Empleado CreateEmpleadoFromDto(CreateEmpleadoDto dto)
+        // Método auxiliar para obtener el string del tipo de empleado
+        private static string GetTipoEmpleadoString(Empleado empleado)
         {
-            return dto.TipoEmpleado switch
+            return empleado.GetType().Name switch
             {
-                "Asalariado" => new EmpleadoAsalariado
-                {
-                    PrimerNombre = dto.PrimerNombre!,
-                    ApellidoPaterno = dto.ApellidoPaterno,
-                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
-                    SalarioSemanal = dto.SalarioSemanal!.Value
-                },
-                "PorHoras" => new EmpleadoPorHoras
-                {
-                    PrimerNombre = dto.PrimerNombre!,
-                    ApellidoPaterno = dto.ApellidoPaterno,
-                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
-                    SueldoPorHora = dto.SueldoPorHora!.Value,
-                    HorasTrabajadas = dto.HorasTrabajadas!.Value
-                },
-                "PorComision" => new EmpleadoPorComision
-                {
-                    PrimerNombre = dto.PrimerNombre!,
-                    ApellidoPaterno = dto.ApellidoPaterno,
-                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
-                    VentasBrutas = dto.VentasBrutas!.Value,
-                    TarifaComision = dto.TarifaComision!.Value
-                },
-                "AsalariadoPorComision" => new EmpleadoAsalariadoPorComision
-                {
-                    PrimerNombre = dto.PrimerNombre!,
-                    ApellidoPaterno = dto.ApellidoPaterno,
-                    NumeroSeguroSocial = dto.NumeroSeguroSocial,
-                    VentasBrutas = dto.VentasBrutas!.Value,
-                    TarifaComision = dto.TarifaComision!.Value,
-                    SalarioBase = dto.SalarioBase!.Value
-                },
-                _ => throw new ArgumentException("Tipo de empleado no válido")
+                nameof(EmpleadoAsalariado) => "Asalariado",
+                nameof(EmpleadoPorHoras) => "PorHoras",
+                nameof(EmpleadoPorComision) => "PorComision",
+                nameof(EmpleadoAsalariadoPorComision) => "AsalariadoPorComision",
+                _ => "Desconocido"
             };
         }
 

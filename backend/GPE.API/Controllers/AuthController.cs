@@ -28,7 +28,7 @@ namespace GPE.API.Controllers
                 return Unauthorized("Invalid credentials");
 
             var token = _tokenGenerator.GenerateToken(user);
-            return Ok(new { token });
+            return Ok(new { token, user.Role });
         }
 
         [HttpPost("register")]
