@@ -1,12 +1,12 @@
-# 💼 Sistema de Gestión de Pagos de Empleados
+# Sistema de Gestión de Pagos de Empleados
 
 > Desarrollo de Prueba Técnica para la Posición de Desarrollador FullStack para SB
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 Sistema completo de gestión de pagos de empleados desarrollado con arquitectura moderna y tecnologías de vanguardia. Permite la administración de diferentes tipos de empleados (Asalariados, Por Horas, Por Comisión y Asalariados por Comisión) con cálculo automático de salarios y gestión de usuarios.
 
-## 🏗️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
 ### Backend (.NET 8)
 
@@ -31,7 +31,7 @@ Sistema completo de gestión de pagos de empleados desarrollado con arquitectura
 - **Entity Framework Migrations** para versionado
 - **Seeding automático** de datos iniciales
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ### Prerrequisitos
 
@@ -63,7 +63,7 @@ docker-compose up --build -d
 - **Swagger**: http://localhost:5001/swagger
 - **SQL Server**: localhost:1433
 
-## 🔧 Comandos de Docker
+## Comandos de Docker
 
 ### Ver logs en tiempo real
 
@@ -101,7 +101,7 @@ docker-compose build frontend
 docker-compose build --no-cache
 ```
 
-## 💾 Gestión de Base de Datos
+## Gestión de Base de Datos
 
 ### Migraciones automáticas
 
@@ -113,23 +113,17 @@ Las migraciones se ejecutan automáticamente al iniciar el contenedor de la API.
 # Ejecutar migraciones
 docker-compose run --rm api dotnet ef database update
 
-# Crear nueva migración (desarrollo local)
-dotnet ef migrations add NombreDeLaMigracion
-
-# Rollback a migración específica
-docker-compose run --rm api dotnet ef database update NombreMigracion
-```
 
 ### Datos de prueba
 
 El sistema incluye datos iniciales:
 
 **Usuarios del sistema:**
-| Usuario | Contraseña | Rol | Email |
-|---------|------------|-----|-------|
-| admin | Admin123! | Administrador | admin@gestionpagos.com |
-| usuario1 | User123! | Usuario | usuario1@gestionpagos.com |
-| usuario2 | User456! | Usuario | usuario2@gestionpagos.com |
+| Usuario | Contraseña | Rol |  
+|---------|------------|-----|
+| admin | Admin123! | Administrador |
+| usuario1 | User123! | Usuario |
+| usuario2 | User456! | Usuario |
 
 ## 🧪 Testing
 
@@ -246,20 +240,6 @@ GestionPagosEmpleados/
 - `POST /api/user` - Crear usuario
 - `PATCH /api/user/{id}/status` - Cambiar estado
 
-## 🐛 Solución de Problemas
-
-### Error de conexión a la base de datos
-
-```bash
-# Verificar que SQL Server esté corriendo
-docker-compose ps
-
-# Reiniciar SQL Server
-docker-compose restart sqlserver
-
-# Ver logs de SQL Server
-docker-compose logs sqlserver
-```
 
 ### Puerto ocupado
 
