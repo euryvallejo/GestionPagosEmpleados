@@ -34,6 +34,9 @@ namespace GPE.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("FechaIngreso")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("NumeroSeguroSocial")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -60,6 +63,12 @@ namespace GPE.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -129,8 +138,8 @@ namespace GPE.Infrastructure.Migrations
                 {
                     b.HasBaseType("GPE.Domain.Entities.Empleado");
 
-                    b.Property<double>("HorasTrabajadas")
-                        .HasColumnType("float");
+                    b.Property<decimal>("HorasTrabajadas")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SueldoPorHora")
                         .HasColumnType("decimal(18,2)");

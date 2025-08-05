@@ -4,22 +4,24 @@ export interface EmpleadoBase {
   primerNombre?: string;
   apellidoPaterno: string;
   numeroSeguroSocial: string;
+  tipoEmpleado: string;
+  fechaIngreso: Date;
 }
 
 export interface EmpleadoAsalariado extends EmpleadoBase {
-  salarioSemanal: number;
+  salarioSemanal: number | 0;
 }
 
 export interface EmpleadoPorHoras extends EmpleadoBase {
-  sueldoPorHora: number;
-  horasTrabajadas: number;
+  sueldoPorHora: number | 0;
+  horasTrabajadas: number | 0;
 }
 
 export interface EmpleadoPorComision extends EmpleadoBase {
-  ventasBrutas: number;
-  tarifaComision: number;
+  ventasBrutas: number | 0;
+  tarifaComision: number | 0;
 }
 
 export interface EmpleadoAsalariadoPorComision extends EmpleadoPorComision {
-  salarioBase: number;
+  salarioBase: number | 0;
 }

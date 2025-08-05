@@ -16,7 +16,7 @@ namespace GPE.Application.DTOs
         // Propiedades específicas según el tipo de empleado
         public decimal? SalarioSemanal { get; set; }
         public decimal? SueldoPorHora { get; set; }
-        public double? HorasTrabajadas { get; set; }
+        public decimal? HorasTrabajadas { get; set; }
         public decimal? VentasBrutas { get; set; }
         public decimal? TarifaComision { get; set; }
         public decimal? SalarioBase { get; set; }

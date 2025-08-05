@@ -17,7 +17,26 @@ namespace GPE.Infrastructure.Repositories
 
         public async Task<IEnumerable<Empleado>> GetAllAsync()
         {
-            return await _context.Empleados.ToListAsync();
+            try
+            {
+                var empleados = await _context.Empleados.ToListAsync();
+
+                Console.WriteLine($"Repository: {empleados.Count} empleados encontrados");
+
+                if (empleados.Any())
+                {
+                    var first = empleados.First();
+                    Console.WriteLine($"Repository - Primera fecha: {first.FechaIngreso:yyyy-MM-dd HH:mm:ss}");
+                    Console.WriteLine($"Repository - Fecha raw: {first.FechaIngreso}");
+                }
+
+                return empleados;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en Repository.GetAllAsync: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<Empleado?> GetByIdAsync(int id)
