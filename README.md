@@ -267,25 +267,15 @@ docker-compose up --build --force-recreate
 
 dotnet test
 
-# Ejecutar tests específicos con filtro
-
-dotnet test --filter "DisplayName~EmpleadoService"
 
 # Ejecutar tests con verbose output
 
 dotnet test --verbosity normal
 
-# Ejecutar tests con cobertura de código
-
-dotnet test --collect:"XPlat Code Coverage"
-
-# Ejecutar tests en modo watch (desarrollo)
-
-dotnet watch test
 
 ## 👨‍💻 Desarrollado por
 
 **Eury Vallejo**
 
 - GitHub: [@euryvallejo](https://github.com/euryvallejo)
-- Email: euryvallejo@example.com
+- Email: euryvallejo@gmail.com
