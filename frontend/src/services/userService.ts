@@ -11,7 +11,7 @@ export interface User {
 
 export interface CreateUserDto {
   username: string;
-  passwordHash: string;
+  password: string;
   role: number;
 }
 
@@ -36,7 +36,8 @@ export const getUsers = async (): Promise<User[]> => {
 // Crear nuevo usuario
 export const createUser = async (userData: CreateUserDto): Promise<User> => {
   try {
-    const response = await apiClient.post('/User', userData);
+    console.log('Creating user with data:', userData);
+    const response = await apiClient.post('/Auth/register', userData);
     return response.data;
   } catch (error) {
     console.error('Error creating user:', error);

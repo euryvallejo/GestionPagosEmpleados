@@ -237,8 +237,24 @@ export default function EmpleadoForm({ empleado, onSuccess, onCancel, isModal = 
                       <div className="invalid-feedback">{errors.apellidoPaterno.message}</div>
                     )}
                   </div>
+                  
+                  <div className="col-md-6 mb-3">
+                      <label className="form-label fw-bold">Primer Nombre</label>
+                      <input 
+                        {...register("primerNombre", {
+                          minLength: { value: 2, message: "Debe tener al menos 2 caracteres" }
+                        })} 
+                        className={`form-control ${errors.primerNombre ? 'is-invalid' : ''}`}
+                        type="text"
+                        placeholder="Ingrese el primer nombre"
+                      />
+                      {errors.primerNombre && (
+                        <div className="invalid-feedback">{errors.primerNombre.message}</div>
+                      )}
+                  </div>
+                  
 
-                  {/* Primer Nombre - NO mostrar para empleados por horas */}
+                  {/* Primer Nombre - NO mostrar para empleados por horas
                   {tipo !== "PorHoras" && (
                     <div className="col-md-6 mb-3">
                       <label className="form-label fw-bold">Primer Nombre</label>
@@ -254,7 +270,7 @@ export default function EmpleadoForm({ empleado, onSuccess, onCancel, isModal = 
                         <div className="invalid-feedback">{errors.primerNombre.message}</div>
                       )}
                     </div>
-                  )}
+                  )} */}
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label fw-bold">Número Seguro Social *</label>
