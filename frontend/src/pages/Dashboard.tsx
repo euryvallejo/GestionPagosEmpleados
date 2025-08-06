@@ -15,7 +15,7 @@ const Dashboard = () => {
   
   // Estados para el modal
   const [showModal, setShowModal] = useState(false);
-  const [editingEmpleadoId, setEditingEmpleadoId] = useState<number | undefined>();
+  const [editingEmpleado, setEditingEmpleado] = useState<Empleado | undefined>();
 
   // Función para obtener el texto del rol
   const getRoleText = () => {
@@ -72,7 +72,7 @@ const Dashboard = () => {
       alert('No tienes permisos para realizar esta acción');
       return;
     }
-    setEditingEmpleadoId(undefined); // Limpiar ID para modo creación
+    setEditingEmpleado(undefined); // ← Limpiar objeto para modo creación
     setShowModal(true);
   };
 
@@ -82,15 +82,26 @@ const Dashboard = () => {
       alert('No tienes permisos para realizar esta acción');
       return;
     }
+    
     console.log('Editando empleado con ID:', id);
-    setEditingEmpleadoId(id); // Establecer ID para modo edición
-    setShowModal(true);
+    
+    // Buscar el empleado completo en la lista actual
+    const empleadoAEditar = empleados.find(emp => emp.id === id);
+    
+    if (empleadoAEditar) {
+      console.log('Empleado encontrado para editar:', empleadoAEditar);
+      setEditingEmpleado(empleadoAEditar); // ← Pasar el objeto completo
+      setShowModal(true);
+    } else {
+      console.error('Empleado no encontrado con ID:', id);
+      alert('Error: No se pudo encontrar el empleado para editar');
+    }
   };
 
   // Función para cerrar el modal
   const handleCloseModal = () => {
     setShowModal(false);
-    setEditingEmpleadoId(undefined); // Limpiar ID al cerrar
+    setEditingEmpleado(undefined); // Limpiar objeto al cerrar
   };
 
   // Función que se ejecuta cuando se guarda exitosamente un empleado
@@ -365,9 +376,6 @@ const Dashboard = () => {
                                   <div className="fw-semibold">
                                     {empleado.primerNombre || 'Sin nombre'} {empleado.apellidoPaterno || 'Sin apellido'}
                                   </div>
-                                  {empleado.segundoNombre && (
-                                    <small className="text-muted">{empleado.segundoNombre}</small>
-                                  )}
                                 </div>
                               </div>
                             </td>
@@ -486,8 +494,8 @@ const Dashboard = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
-                  <i className={`fas ${editingEmpleadoId ? 'fa-user-edit' : 'fa-user-plus'} me-2`}></i>
-                  {editingEmpleadoId ? `Editar Empleado (ID: ${editingEmpleadoId})` : 'Agregar Nuevo Empleado'}
+                  <i className={`fas ${editingEmpleado ? 'fa-user-edit' : 'fa-user-plus'} me-2`}></i>
+                  {editingEmpleado ? `Editar Empleado: ${editingEmpleado.apellidoPaterno}` : 'Agregar Nuevo Empleado'}
                 </h5>
                 <button 
                   type="button" 
@@ -497,9 +505,9 @@ const Dashboard = () => {
                 ></button>
               </div>
               
-              <div className="modal-body p-0">
+            <div className="modal-body p-0">
                 <EmpleadoForm 
-                  empleadoId={editingEmpleadoId}
+                  empleado={editingEmpleado} 
                   onSuccess={handleEmpleadoGuardado}
                   onCancel={handleCloseModal}
                   isModal={true}

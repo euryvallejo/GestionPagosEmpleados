@@ -25,7 +25,7 @@ namespace GPE.Application.Services
                 NombreCompleto = $"{e.PrimerNombre} {e.ApellidoPaterno}".Trim(),
                 NumeroSeguroSocial = e.NumeroSeguroSocial,
                 TipoEmpleado = GetTipoEmpleadoString(e),
-                PagoSemanal = e.CalcularSalario(),
+                PagoSemanal = e.SalarioSemanal,
                 FechaCreacion = DateTime.Now // Asumiendo que no tienes este campo, puedes agregarlo
             }).ToList();
 
