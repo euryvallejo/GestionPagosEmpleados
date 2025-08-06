@@ -278,4 +278,4 @@ dotnet test --verbosity normal
 **Eury Vallejo**
 
 - GitHub: [@euryvallejo](https://github.com/euryvallejo)
-- Email: euryvallejo@gmail.com
+- Email: eurisvallejo@gmail.com
