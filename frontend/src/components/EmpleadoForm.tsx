@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { TipoEmpleado } from "../types/empleado";
-import { createEmpleado } from '../services/empleadoService';
+import { empleadoService, type CreateEmpleadoDto, type UpdateEmpleadoDto, type Empleado } from '../services/empleadoService';
 
 interface EmpleadoFormData {
   tipoEmpleado: TipoEmpleado;
@@ -17,31 +17,65 @@ interface EmpleadoFormData {
 }
 
 interface EmpleadoFormProps {
-  onSuccess?: () => void; // Callback cuando se guarda exitosamente
-  onCancel?: () => void;  // Callback para cancelar
-  isModal?: boolean;      // Indica si está en un modal
+  empleado?: Empleado;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  isModal?: boolean;
 }
 
-export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: EmpleadoFormProps) {
-  const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting } } = useForm<EmpleadoFormData>();
+export default function EmpleadoForm({ empleado, onSuccess, onCancel, isModal = false }: EmpleadoFormProps) {
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm<EmpleadoFormData>();
   const [tipo, setTipo] = useState<TipoEmpleado>("Asalariado");
+  const isEditing = !!empleado;
+
+  // Efecto para poblar el formulario cuando hay un empleado a editar
+  useEffect(() => {
+    if (empleado) {
+      console.log('Empleado para editar:', empleado);
+      
+      // Establecer tipo de empleado y actualizar estado
+      const tipoEmpleado = empleado.tipoEmpleado as TipoEmpleado;
+      setTipo(tipoEmpleado);
+      
+      // Poblar TODOS los campos usando setTimeout para asegurar que el DOM esté listo
+      setTimeout(() => {
+        setValue("tipoEmpleado", tipoEmpleado);
+        setValue("apellidoPaterno", empleado.apellidoPaterno || "");
+        setValue("numeroSeguroSocial", empleado.numeroSeguroSocial || "");
+        
+        // Campos opcionales
+        if (empleado.primerNombre) setValue("primerNombre", empleado.primerNombre);
+        if (empleado.salarioSemanal) setValue("salarioSemanal", empleado.salarioSemanal);
+        if (empleado.sueldoPorHora) setValue("sueldoPorHora", empleado.sueldoPorHora);
+        if (empleado.horasTrabajadas) setValue("horasTrabajadas", empleado.horasTrabajadas);
+        if (empleado.ventasBrutas) setValue("ventasBrutas", empleado.ventasBrutas);
+        if (empleado.tarifaComision) setValue("tarifaComision", empleado.tarifaComision);
+        if (empleado.salarioBase) setValue("salarioBase", empleado.salarioBase);
+        
+        console.log('Formulario poblado con datos del empleado');
+      }, 100);
+    } else {
+      // Si no hay empleado, resetear formulario para creación
+      reset();
+      setTipo("Asalariado");
+    }
+  }, [empleado, setValue, reset]);
+
+  const watchedTipo = watch("tipoEmpleado");
+  useEffect(() => {
+    if (watchedTipo && watchedTipo !== tipo) {
+      setTipo(watchedTipo);
+    }
+  }, [watchedTipo, tipo]);
 
   const onSubmit = async (data: EmpleadoFormData) => {
     console.log('Form data before processing:', data);
     
     // Crear objeto base con campos obligatorios
-    const empleadoData: any = {
-      id: 0,
+    const empleadoData: CreateEmpleadoDto | UpdateEmpleadoDto = {
       apellidoPaterno: data.apellidoPaterno,
       numeroSeguroSocial: data.numeroSeguroSocial,
       tipoEmpleado: data.tipoEmpleado,
-      // Inicializar todos los campos numéricos en 0
-      salarioSemanal: 0,
-      sueldoPorHora: 0,
-      horasTrabajadas: 0,
-      ventasBrutas: 0,
-      tarifaComision: 0,
-      salarioBase: 0
     };
 
     // Agregar campos específicos según el tipo de empleado
@@ -74,21 +108,31 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
     console.log('Processed employee data:', empleadoData);
     
     try {
-      const result = await createEmpleado(empleadoData);
-      if (result) {
+      let result;
+      
+      if (isEditing) {
+        // Actualizar empleado existente
+        result = await empleadoService.update(empleado!.id, empleadoData as UpdateEmpleadoDto);
+        alert('Empleado actualizado exitosamente');
+      } else {
+        // Crear nuevo empleado
+        result = await empleadoService.create(empleadoData as CreateEmpleadoDto);
         alert('Empleado creado exitosamente');
-        reset();
+      }
+      
+      if (result) {
+        if (!isEditing) {
+          reset();
+        }
         
-        // Si está en modal y hay callback de éxito, lo ejecuta
-        if (isModal && onSuccess) {
+        // Ejecutar callback de éxito siempre que exista
+        if (onSuccess) {
           onSuccess();
         }
-      } else {
-        alert('Error al crear el empleado');
       }
     } catch (error) {
-      console.error('Error creating employee:', error);
-      alert('Error al crear el empleado');
+      console.error(`Error ${isEditing ? 'updating' : 'creating'} employee:`, error);
+      alert(`Error al ${isEditing ? 'actualizar' : 'crear'} el empleado`);
     }
   };
 
@@ -123,12 +167,16 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
             <div className="d-flex align-items-center mb-3">
               <div className="me-3">
                 <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '50px', height: '50px' }}>
-                  <i className="fas fa-user-plus text-white fa-lg"></i>
+                  <i className={`fas ${isEditing ? 'fa-user-edit' : 'fa-user-plus'} text-white fa-lg`}></i> 
                 </div>
               </div>
               <div>
-                <h2 className="mb-1">Registrar Nuevo Empleado</h2>
-                <p className="text-muted mb-0">Complete la información del empleado según su tipo</p>
+                <h2 className="mb-1">
+                  {isEditing ? 'Editar Empleado' : 'Registrar Nuevo Empleado'}
+                </h2>
+                <p className="text-muted mb-0">
+                  {isEditing ? 'Modifique la información del empleado' : 'Complete la información del empleado según su tipo'}
+                </p>
               </div>
             </div>
           </div>
@@ -152,7 +200,12 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
                     <label className="form-label fw-bold">Tipo de Empleado *</label>
                     <select 
                       {...register("tipoEmpleado", { required: "El tipo de empleado es requerido" })} 
-                      onChange={(e) => setTipo(e.target.value as TipoEmpleado)}
+                      value={tipo} 
+                      onChange={(e) => {
+                        const newTipo = e.target.value as TipoEmpleado;
+                        setTipo(newTipo);
+                        setValue("tipoEmpleado", newTipo); 
+                      }}
                       className={`form-select ${errors.tipoEmpleado ? 'is-invalid' : ''}`}
                     >
                       <option value="Asalariado">Asalariado</option>
@@ -230,7 +283,7 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
             </div>
           </div>
 
-          {/* Información Salarial */}
+          {/* ... resto del formulario salarial permanece igual ... */}
           <div className="col-12 mb-4">
             <div className="card">
               <div className="card-header bg-success text-white">
@@ -415,7 +468,7 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
             </div>
           </div>
 
-          {/* Botones de Acción */}
+          {/* Botones de Acción - ← AJUSTES AQUÍ */}
           <div className="col-12">
             <div className={`${isModal ? 'border-top pt-3' : 'card'}`}>
               {!isModal && (
@@ -440,12 +493,12 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
                       {isSubmitting ? (
                         <>
                           <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                          Guardando...
+                          {isEditing ? 'Actualizando...' : 'Guardando...'}
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-save me-1"></i>
-                          Guardar Empleado
+                        <i className="fas fa-save me-1"></i>
+                        {isEditing ? 'Actualizar Empleado' : 'Guardar Empleado'}
                         </>
                       )}
                     </button>
@@ -473,12 +526,12 @@ export default function EmpleadoForm({ onSuccess, onCancel, isModal = false }: E
                     {isSubmitting ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                        Guardando...
+                        {isEditing ? 'Actualizando...' : 'Guardando...'}
                       </>
                     ) : (
                       <>
                         <i className="fas fa-save me-1"></i>
-                        Guardar Empleado
+                        {isEditing ? 'Actualizar Empleado' : 'Guardar Empleado'}
                       </>
                     )}
                   </button>

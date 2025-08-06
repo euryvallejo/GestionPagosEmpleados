@@ -28,7 +28,7 @@ const EstadisticasChart: React.FC<EstadisticasChartProps> = ({ estadisticas }) =
                 <div key={tipo.tipoEmpleado} className="pie-segment" style={{
                   '--porcentaje': tipo.porcentaje,
                   '--color': color
-                } as any}>
+                } as React.CSSProperties}>
                   <div className="pie-label">
                     <span className="tipo">{tipo.tipoEmpleado}</span>
                     <span className="porcentaje">{tipo.porcentaje.toFixed(1)}%</span>

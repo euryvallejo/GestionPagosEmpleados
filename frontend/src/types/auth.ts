@@ -6,7 +6,7 @@ export interface LoginData {
 export interface RegisterData {
   username: string;
   password: string;
-  role: 0 | 1; // 0 for User, 1 for Admin
+  role: 2 | 1; // 2 for User, 1 for Admin
 }
 
 export interface AuthResponse {

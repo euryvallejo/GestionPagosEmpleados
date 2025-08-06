@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../authContext';
 import { reportesService } from '../services/reportService';
 import type { ReporteEmpleados, ResumenEmpleados, Estadisticas } from '../services/reportService';
 import TablaEmpleados from '../components/reportes/TablaEmpleados';
 import ResumenCard from '../components/reportes/ResumenCard';
 import EstadisticasChart from '../components/reportes/EstadisticasChart';
 import FiltrosReporte from '../components/reportes/FiltrosReporte';
+import { useAuth } from '../hooks/useAuth';
 
 type VistaReporte = 'resumen' | 'tabla' | 'estadisticas';
 
@@ -31,19 +31,61 @@ const Reports: React.FC = () => {
       if (showLoading) setLoading(true);
       setError(null);
 
-      const [reporte, resumen, stats] = await Promise.all([
-        reportesService.getReporteEmpleados(filtroTipo || undefined),
-        reportesService.getResumenEmpleados(),
-        reportesService.getEstadisticas()
-      ]);
-      
+      console.log('🚀 Iniciando carga de datos de reportes...');
+
+      // Cargar cada endpoint y manejar errores individualmente
+      let reporte: ReporteEmpleados | null = null;
+      let resumen: ResumenEmpleados | null = null;
+      let stats: Estadisticas | null = null;
+
+      // 1. Cargar reporte principal (crítico)
+      try {
+        console.log('📊 Cargando reporte de empleados...');
+        reporte = await reportesService.getReporteEmpleados(filtroTipo || undefined);
+        console.log('✅ Reporte cargado:', reporte?.empleados?.length || 0, 'empleados');
+      } catch (error) {
+        console.error('❌ Error crítico cargando reporte:', error);
+        throw new Error('No se pudo cargar la lista de empleados');
+      }
+
+      // 2. Cargar resumen (con fallback automático)
+      try {
+        console.log('📈 Cargando resumen de empleados...');
+        resumen = await reportesService.getResumenEmpleados();
+        console.log('✅ Resumen cargado exitosamente');
+      } catch (error) {
+        console.warn('⚠️ Resumen no disponible:', error);
+        // El servicio ya maneja el fallback automáticamente
+      }
+
+      // 3. Cargar estadísticas (con fallback automático)
+      try {
+        console.log('📊 Cargando estadísticas...');
+        stats = await reportesService.getEstadisticas();
+        console.log('✅ Estadísticas cargadas exitosamente');
+      } catch (error) {
+        console.warn('⚠️ Estadísticas no disponibles:', error);
+        // El servicio ya maneja el fallback automáticamente
+      }
+
+      // Actualizar estados
       setReporteEmpleados(reporte);
       setResumenEmpleados(resumen);
       setEstadisticas(stats);
       setLastUpdate(new Date());
-    } catch (error) {
-      console.error('Error al cargar reportes:', error);
-      setError('Error al cargar los reportes. Por favor, intente nuevamente.');
+
+      // Log final de estado
+      console.log('🎉 Carga completada:', {
+        reporte: !!reporte,
+        resumen: !!resumen,
+        estadisticas: !!stats,
+        empleados: reporte?.empleados?.length || 0
+      });
+      
+    } catch (error: any) {
+      console.error('💥 Error al cargar reportes:', error);
+      const errorMessage = error.message || 'Error desconocido al cargar los reportes';
+      setError(`${errorMessage}. Por favor, verifique su conexión e intente nuevamente.`);
     } finally {
       setLoading(false);
     }

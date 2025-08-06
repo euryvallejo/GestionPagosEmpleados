@@ -4,7 +4,7 @@ INSERT INTO [dbo].[Users] (Id, Username, PasswordHash, Role, IsActive, CreatedAt
 (
     NEWID(), -- Genera un GUID único para el Id
     'admin', 
-    '$2b$10$rOJ3BvCCBhA8R8K9PzKq0.Xw9J5FjYqK7hF2NdE4GvP8T6R1mL9Xe', -- Contraseña: Admin123!
+    '$2a$11$gi4A8w7T0.XKdTBSn8ODHeAnr3CRNxUyf7I/WrVQZMU4dW6rQwYtW', -- Contraseña: Admin123!
     1, -- Rol Administrador
     1, -- Activo
     GETDATE()
@@ -14,7 +14,7 @@ INSERT INTO [dbo].[Users] (Id, Username, PasswordHash, Role, IsActive, CreatedAt
 (
     NEWID(), -- Genera un GUID único para el Id
     'usuario1', 
-    '$2b$10$tQL4CwDDBiB9S9L0QzLr1.Yw0K6GkZrM8iG3OeF5HwQ9U7S2nM0Yf', -- Contraseña: User123!
+    '$2a$11$VNuujoLILpIlUdb0gkQURO6aDECjPxQdOeH4AgK8fn2jWZ/u6PnHm', -- Contraseña: User123!
     2, -- Rol Usuario
     1, -- Activo
     GETDATE()
@@ -24,7 +24,7 @@ INSERT INTO [dbo].[Users] (Id, Username, PasswordHash, Role, IsActive, CreatedAt
 (
     NEWID(), -- Genera un GUID único para el Id
     'usuario2', 
-    '$2b$10$uRM5DxEECjC0T0M1RzMs2.Zx1L7HlAsN9jH4PfG6IxR0V8T3oN1Zg', -- Contraseña: User456!
+    '$2a$11$vCHNj94VB87loSg.pVv/uuOelx.Dc8yb6c950WUjKkl67m/PmqRvu', -- Contraseña: User456!
     2, -- Rol Usuario
     1, -- Activo
     GETDATE()

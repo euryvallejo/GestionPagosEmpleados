@@ -1,29 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/authService';
-import { useAuth } from '../authContext';
-import type { LoginData } from '../types/auth';
+import { useAuth } from '../hooks/useAuth';
+
+interface LoginData {
+  username: string;
+  password: string;
+}
 
 const Login = () => {
   const [form, setForm] = useState<LoginData>({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login: loginContext } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
+
+  // Solo redirigir cuando termine de cargar
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      console.log('User already authenticated, redirecting...');
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!form.username || !form.password) {
+      setError('Por favor completa todos los campos');
+      return;
+    }
+
     setLoading(true);
+    setError('');
+    
     try {
-      const result = await login(form);
-      console.log('Login successful:', result);
-      loginContext(result.token, result.role);
-      navigate('/dashboard');
-    } catch {
-      alert('Login failed');
+      await login(form);
+      console.log('Login successful, redirecting to dashboard...');
+      navigate('/dashboard', { replace: true });
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setError(error.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Verificando autenticación...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
@@ -31,7 +61,6 @@ const Login = () => {
         <div className="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto">
           <div className="card shadow-lg border-0">
             <div className="card-body p-5" style={{ backgroundColor: 'rgba(13, 48, 72, .9)', color: 'white' }}>
-              {/* Logo Section */}
               <div className="text-center mb-4">
                 <img 
                   src="./src/assets/logo-superintendencia-de-bancos.svg" 
@@ -43,7 +72,13 @@ const Login = () => {
                 <p>Ingresa tus credenciales para continuar</p>
               </div>
 
-              {/* Login Form */}
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  <i className="fas fa-exclamation-triangle me-2"></i>
+                  {error}
+                </div>
+              )}
+
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="username" className="form-label">Usuario</label>
@@ -59,6 +94,7 @@ const Login = () => {
                       value={form.username}
                       onChange={e => setForm({ ...form, username: e.target.value })}
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -77,6 +113,7 @@ const Login = () => {
                       value={form.password}
                       onChange={e => setForm({ ...form, password: e.target.value })}
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -89,7 +126,7 @@ const Login = () => {
                   >
                     {loading ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span className="spinner-border spinner-border-sm me-2" role="status"></span>
                         Iniciando sesión...
                       </>
                     ) : (
@@ -98,16 +135,6 @@ const Login = () => {
                   </button>
                 </div>
               </form>
-
-              {/* Register Link */}
-              <div className="text-center mt-4">
-                <p className="mb-0">
-                  ¿No tienes una cuenta? 
-                  <a href="/register" className="text-decoration-none ms-1 fw-bold">
-                    Regístrate aquí
-                  </a>
-                </p>
-              </div>
             </div>
           </div>
         </div>

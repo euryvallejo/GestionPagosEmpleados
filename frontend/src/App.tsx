@@ -1,43 +1,65 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthProvider';
+import { useAuth } from './hooks/useAuth';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import PrivateRoute from './components/PrivateRoute';
-import Layout from './components/Layout';
-import AuthLayout from './components/AuthLayout';
-import { AuthProvider, useAuth } from './authContext';
-import RegistroEmpleado from './pages/RegistroEmpleado';
 import Reports from './pages/Reports';
 import UserManagement from './pages/UserManagement';
+import Layout from './components/Layout';
 
-
-// Componente para manejar la redirección inicial
-function InitialRedirect() {
-  const { isAuthenticated } = useAuth();
+// Componente para proteger rutas
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
   
-  return <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+}
+
+// Componente para redireccionar usuarios autenticados
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <>{children}</>;
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<InitialRedirect />} />
-      
-      {/* Rutas de autenticación sin sidebar */}
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* Rutas públicas (solo para usuarios no autenticados) */}
+      <Route path="/login" element={
+        <PublicRoute>
+          <Login />
+        </PublicRoute>
+      } />
+      <Route path="/register" element={
+        <PublicRoute>
+          <Register />
+        </PublicRoute>
+      } />
+
+      {/* Rutas protegidas con Layout */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="user-management" element={<UserManagement />} />
       </Route>
 
-      {/* Rutas protegidas con sidebar */}
-      <Route element={<PrivateRoute />}>
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/registro-empleado" element={<RegistroEmpleado />} />
-          <Route path="/user-management" element={<UserManagement />} />
-        </Route>
-      </Route>
+      {/* Ruta catch-all para páginas no encontradas */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

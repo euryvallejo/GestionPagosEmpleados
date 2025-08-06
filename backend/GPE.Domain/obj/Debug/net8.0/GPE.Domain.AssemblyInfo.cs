@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GPE.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27798566b635adb79b372296aa7c4cc8cf8b4db1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89d6d06ffe9074e17bd737e5ea3b9aaa7f678634")]
 [assembly: System.Reflection.AssemblyProductAttribute("GPE.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GPE.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

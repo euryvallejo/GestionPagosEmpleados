@@ -116,3 +116,27 @@ body {
     justify-content: center;
     background-color: #f5f5f5;
 }
+
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.no-data i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    color: #664d03;
+}

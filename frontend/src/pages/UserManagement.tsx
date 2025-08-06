@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../authContext';
+import { useAuth } from '../hooks/useAuth';
 import { getUsers, toggleUserStatus, deleteUser, createUser, updateUser, type User, type CreateUserDto, type UpdateUserDto } from '../services/userService';
 
 const UserManagement = () => {
-  const { role, logout } = useAuth();
+  const { isAdmin, logout, user } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,23 +14,23 @@ const UserManagement = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
     role: 2, // Usuario por defecto
+    isActive: true,
   });
 
   // Verificar si es administrador
-  const isAdmin = () => {
-    const roleNumber = typeof role === 'string' ? parseInt(role) : role;
-    return roleNumber === 1;
-  };
+  // const isAdmin = () => {
+  //   const roleNumber = role;
+  //   return roleNumber === 1;
+  // };
 
   // Redirect si no es admin
   useEffect(() => {
     if (!isAdmin()) {
       navigate('/dashboard');
     }
-  }, [role, navigate]);
+  }, [navigate]);
 
   // Obtener usuarios
   const fetchUsers = async () => {
@@ -50,50 +50,73 @@ const UserManagement = () => {
 
   // Cambiar estado del usuario
   const handleToggleStatus = async (userId: number, currentStatus: boolean) => {
+    if (userId === user?.id) {
+      setError('No puedes cambiar el estado de tu propio usuario');
+      return;
+    }
+
     try {
+      setLoading(true);
+      setError(null);
       await toggleUserStatus(userId, !currentStatus);
       await fetchUsers();
-      alert(`Usuario ${!currentStatus ? 'activado' : 'desactivado'} exitosamente`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al cambiar estado del usuario:', error);
-      alert('Error al cambiar el estado del usuario');
+      const errorMessage = error.response?.data?.message || error.message || 'Error al cambiar el estado del usuario';
+      setError(`Error: ${errorMessage}`);
+    } finally {
+      setLoading(false);
     }
-  };
+};
 
   // Eliminar usuario
   const handleDeleteUser = async (userId: number, username: string) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar al usuario "${username}"?`)) {
+    console.log('Eliminando usuario:', userId, username);
+    // Validaciones adicionales
+    if (userId === user?.id) {
+      setError('No puedes eliminar tu propio usuario');
+      return;
+    }
+
+    if (window.confirm(`¿Estás seguro de que deseas eliminar al usuario "${username}"?\n\nEsta acción no se puede deshacer.`)) {
       try {
+        setLoading(true);
+        setError(null);
         await deleteUser(userId);
         await fetchUsers();
-        alert('Usuario eliminado exitosamente');
-      } catch (error) {
+        // Mostrar mensaje de éxito (puedes usar un toast en lugar de alert)
+        setError(null);
+      } catch (error: any) {
         console.error('Error al eliminar usuario:', error);
-        alert('Error al eliminar el usuario');
+        const errorMessage = error.response?.data?.message || error.message || 'Error al eliminar el usuario';
+        setError(`Error: ${errorMessage}`);
+      } finally {
+        setLoading(false);
       }
     }
-  };
+};
 
   // Abrir modal para crear usuario
   const handleCreateUser = () => {
     setEditingUser(null);
     setFormData({
       username: '',
-      email: '',
       password: '',
       role: 2,
+      isActive: true,
     });
     setShowModal(true);
   };
 
   // Abrir modal para editar usuario
   const handleEditUser = (user: User) => {
+
     setEditingUser(user);
     setFormData({
       username: user.username,
-      email: user.email || '',
       password: '',
       role: user.role,
+      isActive: user.isActive,
     });
     setShowModal(true);
   };
@@ -104,9 +127,9 @@ const UserManagement = () => {
     setEditingUser(null);
     setFormData({
       username: '',
-      email: '',
       password: '',
       role: 2,
+      isActive: true,
     });
   };
 
@@ -119,8 +142,9 @@ const UserManagement = () => {
         // Editar usuario existente
         const updateData: UpdateUserDto = {
           username: formData.username,
-          email: formData.email,
           role: formData.role,
+          passwordHash: formData.password,
+          isActive: formData.isActive,
         };
         await updateUser(editingUser.id, updateData);
         alert('Usuario actualizado exitosamente');
@@ -128,8 +152,7 @@ const UserManagement = () => {
         // Crear nuevo usuario
         const createData: CreateUserDto = {
           username: formData.username,
-          email: formData.email,
-          password: formData.password,
+          passwordHash: formData.password,
           role: formData.role,
         };
         await createUser(createData);
@@ -152,9 +175,7 @@ const UserManagement = () => {
 
   // Filtrar usuarios
   const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+    user.username.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const getRoleText = (roleNumber: number) => {
     return roleNumber === 1 ? 'Administrador' : 'Usuario';
@@ -335,7 +356,6 @@ const UserManagement = () => {
                       <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>Email</th>
                         <th>Rol</th>
                         <th>Estado</th>
                         <th>Creado</th>
@@ -358,7 +378,6 @@ const UserManagement = () => {
                                 {user.username}
                               </div>
                             </td>
-                            <td>{user.email || 'N/A'}</td>
                             <td>
                               <span className={`badge ${user.role === 1 ? 'bg-danger' : 'bg-primary'}`}>
                                 {getRoleText(user.role)}
@@ -447,17 +466,7 @@ const UserManagement = () => {
                     />
                   </div>
                   
-                  <div className="mb-3">
-                    <label className="form-label fw-bold">Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    />
-                  </div>
-                  
-                  {!editingUser && (
+                  {/* {!editingUser && ( */}
                     <div className="mb-3">
                       <label className="form-label fw-bold">Contraseña *</label>
                       <input
@@ -468,7 +477,19 @@ const UserManagement = () => {
                         required
                       />
                     </div>
-                  )}
+                  {/* )} */}
+                    <div className="mb-3">
+                      <label className="form-label fw-bold">Estatus</label>
+                    <select
+                      className="form-select"
+                      value={formData.isActive ? 0 : 1}
+                      onChange={(e) => setFormData({...formData, isActive: e.target.value === '0'})}
+                      required
+                    >
+                      <option value={0}>Activo</option>
+                      <option value={1}>Inactivo</option>
+                    </select>
+                    </div>
                   
                   <div className="mb-3">
                     <label className="form-label fw-bold">Rol *</label>

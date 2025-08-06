@@ -1,9 +1,6 @@
 using GPE.Application.Interfaces;
-using GPE.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using GPE.API.Models;
-using Microsoft.EntityFrameworkCore;
-using GPE.Domain.Entities;
+using GPE.Application.DTOs;
 
 namespace GPE.API.Controllers
 {
@@ -11,39 +8,44 @@ namespace GPE.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ContextApp _context;
-        private readonly IJwtTokenGenerator _tokenGenerator;
+        private readonly IAuthService _authService;
 
-        public AuthController(ContextApp context, IJwtTokenGenerator tokenGenerator)
+        public AuthController(IAuthService authService)
         {
-            _context = context;
-            _tokenGenerator = tokenGenerator;
+            _authService = authService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == login.Username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.PasswordHash))
-                return Unauthorized("Invalid credentials");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var token = _tokenGenerator.GenerateToken(user);
-            return Ok(new { token, user.Role });
+            var result = await _authService.LoginAsync(login);
+
+            if (!result.Success)
+                return Unauthorized(new { message = result.Message });
+
+            return Ok(new
+            {
+                token = result.Token,
+                role = result.Role,
+                message = result.Message,
+            });
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            var exists = await _context.Users.AnyAsync(u => u.Username == dto.Username);
-            if (exists)
-                return BadRequest("Username already exists");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var user = new User(dto.Username, BCrypt.Net.BCrypt.HashPassword(dto.Password), dto.Role);
+            var result = await _authService.RegisterAsync(dto);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            if (!result.Success)
+                return BadRequest(new { message = result.Message });
 
-            return Ok();
+            return Ok(new { message = result.Message });
         }
     }
 }
