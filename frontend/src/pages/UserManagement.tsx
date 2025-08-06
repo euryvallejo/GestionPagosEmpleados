@@ -152,7 +152,7 @@ const UserManagement = () => {
         // Crear nuevo usuario
         const createData: CreateUserDto = {
           username: formData.username,
-          passwordHash: formData.password,
+          password: formData.password,
           role: formData.role,
         };
         await createUser(createData);
