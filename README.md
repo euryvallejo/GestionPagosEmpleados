@@ -287,4 +287,4 @@ dotnet watch test
 **Eury Vallejo**
 
 - GitHub: [@euryvallejo](https://github.com/euryvallejo)
-- Email: euryvallejo@example.com
+- Email: eurisvallejo@gmail.com
