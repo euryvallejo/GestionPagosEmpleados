@@ -76,31 +76,23 @@ namespace GPE.Application.Services
             {
                 "Asalariado" => new EmpleadoAsalariado
                 {
-                    PrimerNombre = dto.PrimerNombre,
-                    ApellidoPaterno = dto.ApellidoPaterno,
                     NumeroSeguroSocial = dto.NumeroSeguroSocial,
                     SalarioSemanal = dto.SalarioSemanal ?? 0
                 },
                 "PorHoras" => new EmpleadoPorHoras
                 {
-                    PrimerNombre = dto.PrimerNombre, // Puede ser null para empleados por horas
-                    ApellidoPaterno = dto.ApellidoPaterno,
                     NumeroSeguroSocial = dto.NumeroSeguroSocial,
                     SueldoPorHora = dto.SueldoPorHora ?? 0,
                     HorasTrabajadas = dto.HorasTrabajadas ?? 0
                 },
                 "PorComision" => new EmpleadoPorComision
                 {
-                    PrimerNombre = dto.PrimerNombre,
-                    ApellidoPaterno = dto.ApellidoPaterno,
                     NumeroSeguroSocial = dto.NumeroSeguroSocial,
                     VentasBrutas = dto.VentasBrutas ?? 0,
                     TarifaComision = dto.TarifaComision ?? 0
                 },
                 "AsalariadoPorComision" => new EmpleadoAsalariadoPorComision
                 {
-                    PrimerNombre = dto.PrimerNombre,
-                    ApellidoPaterno = dto.ApellidoPaterno,
                     NumeroSeguroSocial = dto.NumeroSeguroSocial,
                     SalarioBase = dto.SalarioBase ?? 0,
                     VentasBrutas = dto.VentasBrutas ?? 0,
@@ -111,10 +103,14 @@ namespace GPE.Application.Services
 
             // Calcular el pago automáticamente
             var pagoCalculado = empleado.CalcularSalario();
-
+            empleado.PrimerNombre = dto.PrimerNombre;
+            empleado.ApellidoPaterno = dto.ApellidoPaterno;
             empleado.FechaIngreso = DateTime.UtcNow;
             empleado.TipoEmpleado = dto.TipoEmpleado;
-            empleado.SalarioSemanal = pagoCalculado; // Asignar el pago calculado
+            if (dto.TipoEmpleado != "Asalariado")
+            {
+                empleado.SalarioSemanal = pagoCalculado;
+            }
 
             // Guardar en la base de datos
             await _repository.CreateAsync(empleado);

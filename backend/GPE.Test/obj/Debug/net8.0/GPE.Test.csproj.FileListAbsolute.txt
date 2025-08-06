@@ -167,3 +167,4 @@
 /Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/obj/Debug/net8.0/GPE.Test.pdb
 /Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/obj/Debug/net8.0/GPE.Test.genruntimeconfig.cache
 /Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/obj/Debug/net8.0/ref/GPE.Test.dll
+/Users/euryvallejo/ProyectosGithub/GestionPagosEmpleados/backend/GPE.Test/bin/Debug/net8.0/BCrypt.Net-Next.dll

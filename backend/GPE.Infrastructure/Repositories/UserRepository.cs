@@ -83,7 +83,7 @@ namespace GPE.Infrastructure.Repositories
             }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             try
             {
@@ -100,5 +100,35 @@ namespace GPE.Infrastructure.Repositories
                 throw;
             }
         }
+        public async Task<User> GetByIdAsync(int id)
+        {
+            try
+            {
+                return await _context.Users.FindAsync(id) ?? throw new KeyNotFoundException($"User with ID {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user by ID: {UserId}", id);
+                throw;
+            }
+        }
+        public async Task<User> ToggleStatusAsync(string username)
+        {
+            try
+            {
+                var user = await GetByUsernameAsync(username);
+                if (user == null) throw new KeyNotFoundException($"User with username {username} not found.");
+
+                user.IsActive = !user.IsActive;
+                await UpdateAsync(user);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling status for user: {Username}", username);
+                throw;
+            }
+        }
+
     }
 }

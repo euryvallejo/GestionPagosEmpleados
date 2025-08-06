@@ -3,9 +3,7 @@ import apiClient from './apiClient';
 export interface Empleado {
   id: number;
   primerNombre: string;
-  segundoNombre?: string;
   apellidoPaterno: string;
-  apellidoMaterno?: string;
   salarioBase: number;
   tipoEmpleado: string;
   fechaIngreso: string;
@@ -13,9 +11,7 @@ export interface Empleado {
 
 export interface CreateEmpleadoDto {
   primerNombre: string;
-  segundoNombre?: string;
   apellidoPaterno: string;
-  apellidoMaterno?: string;
   salarioBase: number;
   tipoEmpleado: string;
   fechaIngreso: string;
@@ -33,6 +29,7 @@ export const empleadoService = {
   },
 
   async create(empleado: CreateEmpleadoDto): Promise<Empleado> {
+    console.log('Creating empleado with data:', empleado);
     const response = await apiClient.post('/empleado', empleado);
     return response.data;
   },

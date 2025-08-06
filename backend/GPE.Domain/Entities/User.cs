@@ -10,9 +10,13 @@ namespace GPE.Domain.Entities
     {
         public User(string username, string passwordHash, Role role)
         {
+            Id = Guid.NewGuid();
+            IsActive = true;
             Username = username;
             PasswordHash = passwordHash;
             Role = role;
+            CreatedAt = DateTime.UtcNow;
+            LastLogin = DateTime.UtcNow;
         }
 
         public Guid Id { get; set; } = Guid.NewGuid();

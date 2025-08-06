@@ -5,7 +5,7 @@ export interface EmpleadoReporte {
   nombreCompleto: string;
   numeroSeguroSocial: string;
   tipoEmpleado: string;
-  pagoSemanal: number;
+  salarioSemanal: number;
   fechaCreacion: string;
 }
 

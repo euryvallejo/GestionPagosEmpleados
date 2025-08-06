@@ -30,11 +30,9 @@ namespace GPE.Application.Services
             var user = new User(
                 dto.Username,
                 hashedPassword,
-                dto.Role)
-            {
-                IsActive = true,
-                CreatedAt = DateTime.Now
-            };
+                dto.Role);
+
+            Console.WriteLine($"Creating user: {user}");
 
             await _repo.Add(user);
             return user;
@@ -62,6 +60,44 @@ namespace GPE.Application.Services
         public async Task<User> GetByUsernameAsync(string username)
         {
             return await _repo.GetByUsernameAsync(username);
+        }
+        public async Task<User> UpdateAsync(Guid id, UserDto dto)
+        {
+            var user = await _repo.GetByIdAsync(id);
+            if (user == null)
+                return null;
+
+            user.Username = dto.Username;
+            user.Role = dto.Role;
+            user.IsActive = dto.IsActive;
+
+            if (!string.IsNullOrEmpty(dto.PasswordHash))
+            {
+                user.PasswordHash = _passwordHasher.HashPassword(dto.PasswordHash);
+            }
+
+            await _repo.UpdateAsync(user);
+            return user;
+        }
+        public async Task<User> DeleteAsync(Guid id)
+        {
+            var user = await _repo.GetByIdAsync(id);
+            if (user == null)
+                return null;
+
+            await _repo.DeleteAsync(user.Id);
+            return user;
+        }
+
+        public async Task<User> ToggleStatusAsync(Guid id)
+        {
+            var user = await _repo.GetByIdAsync(id);
+            if (user == null)
+                return null;
+
+            user.IsActive = !user.IsActive;
+            await _repo.UpdateAsync(user);
+            return user;
         }
     }
 }
